@@ -5,7 +5,7 @@ const cors = require('cors');
 require('dotenv').config();
 const app = express();
 app.use(cors());
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 // LOCATION DATA
 
 function FormattedData(query, location) {
@@ -29,7 +29,7 @@ function handleLocationRequest(request, response) {
   response.send(newLocation);
 }
 
-
+/// WEATHER ////
 function FormattedTimeAndWeather(query, specificweather) {
 
   this.forecast = specificweather.summary;
@@ -39,25 +39,12 @@ function FormattedTimeAndWeather(query, specificweather) {
 
 app.get('/weather', handleWeatherRequest);
 
-// function handleWeatherRequest(request, response) {
-//     var arrDaysWeather = [];
-//     let query = request.query.data;
-//     const weatherData = require('./data/darksky.json')
-//     // console.log(weatherData.daily.data.length)
-
-//     for (var x = 0; x < weatherData.daily.data.length; x++){
-//         console.log("weatherData.daily.data[x] is " + weatherData.daily.data[x])
-//         var newWeather = new FormattedTimeAndWeather(query, weatherData.daily.data[x])
-//         arrDaysWeather.push(newWeather)
-//     }
-//     response.send(arrDaysWeather)
-// }
 
 function handleWeatherRequest(request, response) {
   var arrDaysWeather = [];
   let query = request.query.data;
   const weatherData = require('./data/darksky.json');
-  console.log(weatherData.daily.data.length);
+  //console.log(weatherData.daily.data.length);
 
   // for (var x = 0; x < weatherData.daily.data.length; x++){
   //     console.log("weatherData.daily.data[x] is " + weatherData.daily.data[x])
@@ -88,5 +75,5 @@ app.get('/*', function(request, response){
 console.log('LOCATIONS END FIRING');
 
 app.listen(PORT, () => {
-  console.log('Port is working and listening  onnnnn port ' + PORT);
+  console.log('Port is working and listening  on port ' + PORT);
 });
