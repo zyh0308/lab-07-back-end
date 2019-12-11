@@ -23,18 +23,20 @@ app.get('/location', (request, response) => {
   const urlToVisit = `https://maps.googleapis.com/maps/api/geocode/json?address=${search_query}&key=${GEOCODE_API_Key}`;
 
   superagent.get(urlToVisit).then(responseFromSuper => {
-    //console.log('stuff', responseFromSuper.body);
+    console.log('body', responseFromSuper.body);
+    console.log('headers', responseFromSuper.headers);
+    console.log('status', responseFromSuper.status);
 
     const geoData = responseFromSuper.body;
     //console.log('geodata', geoData);
-    const specificGeoData = geoData.results[0];
-    const formattedQuery = specificGeoData.formatted_address;
+    const location = geoData.results[0];
+    const formatted_query = location.formatted_address;
 
-    const lat = specificGeoData.geometry.location.lat;
+    const latitude = location.geometry.location.lat;
     //console.log(lat);
-    const lng = specificGeoData.geometry.location.lng;
+    const longitude = location.geometry.location.lng;
 
-    response.send(new FormattedData(search_query, formattedQuery, lat, lng));
+    response.send(new FormattedData(search_query, formatted_query, latitude, longitude));
   }).catch(error => {
     response.status(500).send(error.message);
     console.error(error);
@@ -69,13 +71,6 @@ function handleWeatherRequest(request, response) {
 
   response.send(arrDaysWeather);
 }
-
-
-
-
-
-
-
 
 
 
