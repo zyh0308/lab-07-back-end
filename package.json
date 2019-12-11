@@ -1,5 +1,5 @@
 {
-  "name": "lab-06-repository",
+  "name": "lab-07-repository",
   "version": "1.0.0",
   "description": "Number and name of feature: ________________________________",
   "main": "server.js",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JBajracharya/lab-06-repository.git"
+    "url": "git+https://github.com/JBajracharya/lab-07-repository.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/JBajracharya/lab-06-repository/issues"
+    "url": "https://github.com/JBajracharya/lab-07-repository/issues"
   },
-  "homepage": "https://github.com/JBajracharya/lab-06-repository#readme",
+  "homepage": "https://github.com/JBajracharya/lab-07-repository#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",

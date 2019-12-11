@@ -4,14 +4,15 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const app = express();
-app.use(cors());
 const PORT = process.env.PORT || 3001;
 const GEOCODE_API_Key = process.env.GOOGLE_API_KEY;
 const superagent = require('superagent');
+app.use(cors());
 
 // LOCATION DATA
 
 function FormattedData(query, location) {
+    console.log(location)
   this.search_query = query;
   this.formatted_query = location.formatted_address;
   this.latitude = location.geometry.location.lat;
@@ -28,15 +29,11 @@ app.get('/location', (request, response) => {
     console.log('status', responseFromSuper.status);
 
     const geoData = responseFromSuper.body;
-    //console.log('geodata', geoData);
+    
     const location = geoData.results[0];
-    const formatted_query = location.formatted_address;
+   
 
-    const latitude = location.geometry.location.lat;
-    //console.log(lat);
-    const longitude = location.geometry.location.lng;
-
-    response.send(new FormattedData(search_query, formatted_query, latitude, longitude));
+    response.send(new FormattedData(search_query, location));
   }).catch(error => {
     response.status(500).send(error.message);
     console.error(error);
@@ -80,7 +77,7 @@ app.get('/*', function(request, response){
   response.status(404).send('Error Loading Results');
 });
 
-console.log('LOCATIONS END FIRING');
+// console.log('LOCATIONS END FIRING');
 
 app.listen(PORT, () => {
   console.log('Port is working and listening  on port ' + PORT);
