@@ -6,6 +6,9 @@ require('dotenv').config();
 const app = express();
 app.use(cors());
 const PORT = process.env.PORT || 3001;
+const GEOCODE_API_Key = process.env.GOOGLE_API_KEY;
+const superagent = require('superagent');
+
 // LOCATION DATA
 
 function FormattedData(query, location) {
@@ -15,19 +18,29 @@ function FormattedData(query, location) {
   this.longitude = location.geometry.location.lng;
 }
 
+app.get('/location', (request, response) => {
+  const search_query = request.query.data;
+  const urlToVisit = `https://maps.googleapis.com/maps/api/geocode/json?address=${search_query}&key=${process.env.GOOGLE_API_KEY}`;
 
-app.get('/location', handleLocationRequest);
+  superagent.get(urlToVisit).then(responseFromSuper => {
+    //console.log('stuff', responseFromSuper.body);
 
-function handleLocationRequest(request, response) {
+    const geoData = responseFromSuper.body;
+    //console.log('geodata', geoData);
+    const specificGeoData = geoData.results[0];
+    const formattedQuery = specificGeoData.formatted_address;
 
-  let query = request.query.data;
+    const lat = specificGeoData.geometry.location.lat;
+    //console.log(lat);
+    const lng = specificGeoData.geometry.location.lng;
 
-  const interestedData = require('./data/geo.json');
-  console.log(interestedData.results[0]);
-  let newLocation = new FormattedData(query, interestedData.results[0]);
+    response.send(new FormattedData(search_query, formattedQuery, lat, lng));
+  }).catch(error => {
+    response.status(500).send(error.message);
+    console.error(error);
+  });
+})
 
-  response.send(newLocation);
-}
 
 /// WEATHER ////
 function FormattedTimeAndWeather(query, specificweather) {
