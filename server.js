@@ -20,7 +20,7 @@ function FormattedData(query, location) {
 
 app.get('/location', (request, response) => {
   const search_query = request.query.data;
-  const urlToVisit = `https://maps.googleapis.com/maps/api/geocode/json?address=${search_query}&key=${process.env.GOOGLE_API_KEY}`;
+  const urlToVisit = `https://maps.googleapis.com/maps/api/geocode/json?address=${search_query}&key=${GEOCODE_API_Key}`;
 
   superagent.get(urlToVisit).then(responseFromSuper => {
     //console.log('stuff', responseFromSuper.body);
