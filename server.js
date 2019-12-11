@@ -42,43 +42,55 @@ app.get('/location', (request, response) => {
 
 
 /// WEATHER ////
-function FormattedTimeAndWeather(query, specificweather) {
 
-  this.forecast = specificweather.summary;
-  this.time = new Date(specificweather.time * 1000).toDateString();
-}
+function WeatherGetter(weatherValue) {
+    this.forecast = weatherValue.summary;
+    this.time = new Date(weatherValue.time * 1000).toDateString();
+  }
+  app.get('/weather', (request, response) => {
+      const weather_query = request.query.data
 
-
-app.get('/weather', handleWeatherRequest);
-
-
-function handleWeatherRequest(request, response) {
-  var arrDaysWeather = [];
-  let query = request.query.data;
-  const weatherData = require('./data/darksky.json');
-  //console.log(weatherData.daily.data.length);
-
-  // for (var x = 0; x < weatherData.daily.data.length; x++){
-  //     console.log("weatherData.daily.data[x] is " + weatherData.daily.data[x])
-  weatherData.daily.data.map(item => {
-    var newWeather = new FormattedTimeAndWeather(query, item);
-    arrDaysWeather.push(newWeather);
-    return arrDaysWeather;
-  });
-
-  response.send(arrDaysWeather);
-}
-
-
-
-
-
-app.get('/*', function(request, response){
-  response.status(404).send('Error Loading Results');
-});
+    const urlToVisit = `https://api.darksky.net/forecast/${process.env.WEATHER_API_KEY}/${weather_query.latitude},${weather_query.longitude}`;
+    superagent.get(urlToVisit).then(responseFromSuper => {
+      //console.log('stuff', responseFromSuper.body);
+      const darkskyData = responseFromSuper.body;
+      const dailyData = darkskyData.daily.data.map(value => new WeatherGetter(value));
+      response.send(dailyData);
+    }).catch (error =>  {
+      console.error(error);
+      response.status(500).send(error.message);
+    });
+  })
 
 // console.log('LOCATIONS END FIRING');
 
+
+
+
+// EVENT DATA
+function Eventbrite(eventObj) {
+    this.name = eventObj.name.text
+    this.summary = eventObj.description.text
+    this.link = eventObj.url
+    this.event_date = eventObj.start.local
+  }
+  app.get('/events', (request, response) => {
+      const event_query = request.query.data
+    const urlToVisit = `https://www.eventbriteapi.com/v3/events/search?location.longitude=${event_query.longitude}&location.latitude=${event_query.latitude}&token=${process.env.EVENT_API_KEY}`;
+    // console.log(urlToVisit);
+    superagent.get(urlToVisit).then(responseFromSuper => {
+      // console.log('things', responseFromSuper.body.events[0])
+      const body = responseFromSuper.body;
+      const events = body.events;
+      const normalizedEvents = events.map(eventObj => new Eventbrite(eventObj));
+      response.send(normalizedEvents);
+    })
+  })
+
 app.listen(PORT, () => {
+
   console.log('Port is working and listening  on port ' + PORT);
 });
+    
+
+
