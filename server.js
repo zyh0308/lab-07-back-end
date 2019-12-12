@@ -57,7 +57,9 @@ app.get('/weather', (request, response) => {
     const darkskyData = responseFromSuper.body;
     const dailyData = darkskyData.daily.data.map(value => new WeatherGetter(value));
     response.send(dailyData);
-  }).catch (error => {
+
+  }).catch(error => {
+
     console.error(error);
     response.status(500).send(error.message);
   });
@@ -70,26 +72,33 @@ app.get('/weather', (request, response) => {
 
 // EVENT DATA
 function Eventbrite(eventObj) {
-  this.name = eventObj.name.text
-  this.summary = eventObj.description.text
+
+  this.name = eventObj.title
+  this.summary = eventObj.description
   this.link = eventObj.url
-  this.event_date = eventObj.start.local
+  this.event_date = eventObj.start_time
 }
 app.get('/events', (request, response) => {
   const event_query = request.query.data
-  const urlToVisit = `https://www.eventbriteapi.com/v3/events/search?location.longitude=${event_query.longitude}&location.latitude=${event_query.latitude}&token=${process.env.EVENT_API_KEY}`;
-  // console.log(urlToVisit);
+  const urlToVisit = `http://api.eventful.com/json/events/search?location=${event_query.formatted_query}&date=Future&app_key=${process.env.EVENT_API_KEY}`;
+  console.log(urlToVisit);
+
   superagent.get(urlToVisit).then(responseFromSuper => {
-    // console.log('things', responseFromSuper.body.events[0])
-    const body = responseFromSuper.body;
-    const events = body.events;
+    const body = JSON.parse(responseFromSuper.text);
+    const events = body.events.event;
     const normalizedEvents = events.map(eventObj => new Eventbrite(eventObj));
     response.send(normalizedEvents);
-  })
+  }).catch(error => console.log(error))
 })
 
-app.listen(PORT, () => {
 
+
+
+
+
+
+app.listen(PORT, () => {
+  
   console.log('Port is working and listening  on port ' + PORT);
 });
 
