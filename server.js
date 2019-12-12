@@ -1,4 +1,6 @@
 'use strict';
+let lat;
+let lng;
 
 const express = require('express');
 const cors = require('cors');
@@ -20,13 +22,11 @@ function FormattedData(query, location) {
 }
 
 app.get('/location', (request, response) => {
-  const search_query = request.query.data;
-  const urlToVisit = `https://maps.googleapis.com/maps/api/geocode/json?address=${search_query}&key=${GEOCODE_API_Key}`;
+  const searchQuery = request.query.data;
+  const urlToVisit = `https://maps.googleapis.com/maps/api/geocode/json?address=${searchQuery}&key=${process.env.GOOGLE_API_KEY}`;
 
   superagent.get(urlToVisit).then(responseFromSuper => {
-    console.log('body', responseFromSuper.body);
-    console.log('headers', responseFromSuper.headers);
-    console.log('status', responseFromSuper.status);
+    //console.log('stuff', responseFromSuper.body);
 
     const geoData = responseFromSuper.body;
 
@@ -40,6 +40,7 @@ app.get('/location', (request, response) => {
   });
 })
 
+// WEATHER DATA
 
 /// WEATHER ////
 
@@ -56,7 +57,9 @@ app.get('/weather', (request, response) => {
     const darkskyData = responseFromSuper.body;
     const dailyData = darkskyData.daily.data.map(value => new WeatherGetter(value));
     response.send(dailyData);
+
   }).catch(error => {
+
     console.error(error);
     response.status(500).send(error.message);
   });
@@ -69,6 +72,7 @@ app.get('/weather', (request, response) => {
 
 // EVENT DATA
 function Eventbrite(eventObj) {
+
   this.name = eventObj.title
   this.summary = eventObj.description
   this.link = eventObj.url
@@ -86,6 +90,7 @@ app.get('/events', (request, response) => {
     response.send(normalizedEvents);
   }).catch(error => console.log(error))
 })
+
 
 
 
