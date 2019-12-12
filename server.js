@@ -76,7 +76,6 @@ function Eventbrite(eventObj) {
 }
 app.get('/events', (request, response) => {
   const event_query = request.query.data
-  // const urlToVisit = `https://api.eventful.com/json/events/search?location=${event_query.latitude},${event_query.longitude}&app_key=${process.env.EVENT_API_KEY}`;
   const urlToVisit = `http://api.eventful.com/json/events/search?location=${event_query.formatted_query}&date=Future&app_key=${process.env.EVENT_API_KEY}`;
   console.log(urlToVisit);
 
@@ -100,15 +99,3 @@ app.listen(PORT, () => {
 
 
 
-
-// function updateEvents(query, request, response){
-//   const urlToVisit = `https://www.eventbriteapi.com/v3/events/search?location.longitude=${request.query.data.longitude}&location.latitude=${request.query.data.latitude}&token=${process.env.EVENT_API_KEY}`;
-//   superagent.get(urlToVisit).then(responseFromSuper => {
-//     const formattedEvent = responseFromSuper.body.events.map(
-//       event => new Eventbrite(event.url, event.name.text, event.start.local, event.summary)
-//     );
-//     response.send(formattedEvent);
-//     }
-//    )
-    
-//   }
